@@ -1,0 +1,197 @@
+Phase 1 — Shared NeedsAttention UI foundation
+Build one reusable component that both Guard and Resident dashboards can use.
+NeedsAttentionSection
+ ├── Header
+ │    ├── "Needs Attention"
+ │    ├── count badge
+ │    └── Expand / Collapse
+ │
+ └── AttentionItem[]
+      ├── icon
+      ├── title
+      ├── subtitle
+      ├── optional badge
+      └── action / chevron
+
+Rules: 0 items = hide completely; 1–2 = show all with no collapse control; 3+ = show first 2 and a 2 more row; tapping expands/collapses. Make the whole item clickable, not only the CTA.
+Keep this component presentation-only. It should receive items and callbacks rather than knowing anything about visitors, maintenance, or announcements.
+Phase 2 — Guard dashboard migration
+Start here because the guard screen already has exactly the UI pattern you like.
+Replace:
+1 visitor waiting for approval
+1 visitor ready to check in
+
+with:
+Needs Attention                         4
+
+👤 1 visitor waiting for approval
+   Requires your review             Review →
+
+🚪 1 visitor ready to check in
+   Expected visitor               Check In →
+
+   2 more                              ↓
+
+Map your existing guard data into the shared model. Don’t change the Scan Visitor card, quick actions, overview, or navigation yet.
+This phase validates the component without touching the more complicated resident dashboard.
+Phase 3 — Resident Needs Attention
+Reuse exactly the same component, but give it resident-specific items.
+I’d use this priority:
+1. Visitor awaiting approval
+2. Maintenance payment rejected
+3. Maintenance overdue
+4. Maintenance due soon
+5. Important announcement
+
+For example:
+Needs Attention                         4
+
+👤 2 visitors awaiting approval
+   Waiting for your action          Review →
+
+₹  Maintenance overdue
+   ₹2,500 · September 2026         Pay Now →
+
+   2 more                              ↓
+
+A payment_pending_review should normally stay in the Maintenance section because the resident has nothing to do. If verification is rejected, then it becomes Needs Attention.
+Phase 4 — Dedicated Maintenance card
+Now redesign the resident Maintenance section independently of Needs Attention.
+Its CTA changes by state:
+UNPAID
+₹2,500 · Due 30 Sep
+                         Pay Now →
+
+PENDING REVIEW
+₹2,500 · UTR submitted
+                  View Details →
+
+PAID
+₹2,500 · Paid
+               View Receipt →
+
+REJECTED
+Payment verification failed
+                     Review →
+
+This prevents the action center from becoming a replacement for the actual Maintenance module.
+Phase 5 — Announcements
+Treat announcements similarly.
+An important unread announcement can appear in Needs Attention:
+📢 Water Supply Maintenance
+   Tomorrow · 10 AM–2 PM
+                            View →
+
+But keep your normal Announcement section/card elsewhere on the dashboard for browsing society updates.
+Regular announcements should not enter Needs Attention.
+Once the resident opens/acknowledges an important announcement, remove it from Needs Attention while leaving it available under Announcements.
+Phase 6 — Dashboard cleanup
+Only after those pieces work, clean up the overall resident hierarchy.
+I’d target:
+Good morning, Flat 101 👋
+Flat 101 · Owner · 🟢 Live
+
+Promotional / Important banner
+
+Needs Attention
+[only when necessary]
+
+Invite Visitor
+[large primary CTA]
+
+Manage Invites | Maintenance | Announcements | History
+
+Maintenance
+[current bill/status]
+
+Society Announcements
+[latest content]
+
+Overview
+[visitor/member stats]
+
+Bottom navigation
+
+This also solves the problem we noticed earlier: don’t use valuable dashboard space twice for Profile. If Profile remains in bottom navigation, you don't need a large profile shortcut at the top; the top-right can primarily be notification/bell functionality.
+Phase 7 — Polish and edge cases
+Finish with animation and state handling: animate expand/collapse around 180–250 ms, preserve expanded state while the user remains on the screen, remove completed actions without a full-screen refresh, show skeletons rather than layout jumps, handle long announcement titles, pluralize 1 action / 4 actions, and test 0, 1, 2, 3, 5, and 10+ items.
+I would not add another frontend polling mechanism just for this component. Your existing backend notification/push architecture can signal changes, and dashboard data can be refreshed when the screen focuses or after the user performs an action.
+So the implementation order I'd actually follow is:
+Shared component → Guard integration → Resident integration → Maintenance states → Announcement states → Dashboard cleanup → animations/edge cases.
+
+For the Society Hub, I’d treat it differently from “Needs Attention.” Hub is a destination where residents browse and participate.
+Given your two-channel model, I’d make the resident Hub like this:
+Society Hub
+
+┌──────────────────────────────────────┐
+│ 📢  Announcements              2 new │
+│ Official updates from your society   │
+│                              →       │
+└──────────────────────────────────────┘
+
+┌──────────────────────────────────────┐
+│ 👥  Community                  5 new │
+│ Connect with your neighbours         │
+│                              →       │
+└──────────────────────────────────────┘
+
+Recent
+────────────────────────────────────────
+
+📢 Water Supply Maintenance
+   Water supply will be unavailable...
+   Important · 2h ago
+   👍 12    💬 4
+
+👤 Rahul • Flat B-204
+   Selling study table...
+   35m ago
+   👍 3     💬 6
+
+Announcements channel
+This is your official society communication channel.
+Admins/owners post; residents read, react, and comment when comments are enabled. Pinned/important posts should visually stand out.
+An important unread announcement can additionally surface on Home → Needs Attention, but tapping it takes the resident into the Hub post. Once read/acknowledged, it disappears from Needs Attention—it does not disappear from Hub.
+Community channel
+This is the resident social space:
+“Selling dining table”
+
+“Anyone know a good plumber?”
+
+“Need breakfast/tiffin service”
+
+“Found keys near Tower B”
+
+Residents can create posts, react, comment, and optionally attach images.
+Your backend structure with channel_posts, channel_comments, channel_reactions, channel_attachments, channel_read_states, categories, etc. already fits this model well. 
+Navigation
+I would not put Announcements as a permanent bottom-nav item by itself anymore.
+Once Society Hub exists, Announcements belongs inside Hub.
+For residents, I'd move toward:
+ Home        Hub        + Invite       Maintenance       Profile
+  🏠         ◉             +               ₹              👤
+
+Then Home quick actions can become:
+Manage Invites    Maintenance    Society Hub    History
+
+This is much more scalable. Later, polls, events, notices, lost & found, buy/sell, recommendations, etc. can all live inside Hub without adding more dashboard buttons.
+Home + Hub relationship
+Think of it as:
+                   SOCIETY HUB
+                       │
+          ┌────────────┴────────────┐
+          │                         │
+   Announcements                Community
+          │                         │
+          ↓                         ↓
+ Important unread              Normal feed
+ announcement
+          │
+          ↓
+ HOME → Needs Attention
+
+Home = what requires my attention now.
+Hub = what's happening in my society.
+Notifications = what changed since I last looked.
+That separation will keep Apna Gate clean even as you add more modules.
+For the frontend implementation, I'd therefore do the Needs Attention component first, then build Hub home → Announcements feed → Community feed → post detail/comments → create post, and finally wire important Hub posts into the resident Home attention section.
