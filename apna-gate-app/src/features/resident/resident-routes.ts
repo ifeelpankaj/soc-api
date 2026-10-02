@@ -17,7 +17,7 @@ export function residentMaintenanceRoute(): Href {
 }
 
 export function residentAnnouncementsRoute(): Href {
-  return "/resident/announcements" as Href;
+  return "/resident/hub/announcements" as Href;
 }
 
 export function residentMaintenanceBillRoute(

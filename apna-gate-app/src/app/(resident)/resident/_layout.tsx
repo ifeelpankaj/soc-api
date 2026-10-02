@@ -25,6 +25,11 @@ export default function ResidentStackLayout() {
         <Stack.Screen name="visitors/index" />
         <Stack.Screen name="visitors/invite" />
         <Stack.Screen name="visitors/settings" />
+        <Stack.Screen name="hub/announcements" />
+        <Stack.Screen name="hub/community" />
+        <Stack.Screen name="hub/create" />
+        <Stack.Screen name="hub/edit/[postId]" />
+        <Stack.Screen name="hub/posts/[postId]" />
       </Stack>
     </ResidentProvider>
   );

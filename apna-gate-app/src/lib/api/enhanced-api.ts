@@ -13,6 +13,7 @@ export const enhancedApi = generatedApi.enhanceEndpoints({
     "VisitorInvites",
     "FlatVisitorEntries",
     "Notifications",
+    "Hub",
   ],
   endpoints: {
     postV1AuthChangePassword: { invalidatesTags: [] },

@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import type { Href } from "expo-router";
-import { Pressable, StyleSheet, Text } from "react-native";
+import { useFocusEffect } from "expo-router";
+import { useCallback } from "react";
+import { BackHandler, Platform, Pressable, StyleSheet, Text } from "react-native";
 
 import { AppIcon } from "@/components/icons";
 import { Row } from "@/components/layout/row";
@@ -21,6 +23,19 @@ export function ScreenBackHeader({
   trailing,
 }: ScreenBackHeaderProps) {
   const handleBack = useBackAction(fallbackHomeRoute);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (Platform.OS !== "android") {
+        return undefined;
+      }
+      const subscription = BackHandler.addEventListener("hardwareBackPress", () => {
+        handleBack();
+        return true;
+      });
+      return () => subscription.remove();
+    }, [handleBack]),
+  );
 
   return (
     <Row align="center" gap="md" style={styles.header}>

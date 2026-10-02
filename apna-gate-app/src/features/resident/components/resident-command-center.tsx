@@ -1,4 +1,3 @@
-import { useProfilePhoto } from "@/features/profile/use-profile-photo";
 import { useRouter } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
@@ -7,7 +6,6 @@ import { Stack } from "@/components/layout";
 import {
   DashboardActionRow,
   DashboardActivityFeed,
-  DashboardAlertBar,
   DashboardBannerCarousel,
   DashboardErrorBanner,
   DashboardHeader,
@@ -15,42 +13,68 @@ import {
   DashboardOverviewGrid,
   DashboardSection,
   DashboardSkeleton,
+  NeedsAttentionSection,
   SubscriptionExpiredBanner,
   getTimeGreeting,
   type DashboardActionTileConfig,
   type DashboardOverviewStatConfig,
 } from "@/components/dashboard";
-import { VisitorDetailSheet } from "@/features/visitors/components/visitor-detail-sheet";
+import { useResidentAttentionItems } from "@/features/dashboard/use-resident-attention-items";
+import { residentHubPostRoute, residentHubRoute } from "@/features/hub/hub-routes";
+import { notificationsRoute } from "@/features/notifications/notification-routing";
+import { ResidentAnnouncementsSnapshot } from "@/features/resident/components/resident-announcements-snapshot";
+import { ResidentMaintenanceDashboardCard } from "@/features/resident/components/resident-maintenance-dashboard-card";
 import { ResidentScreenShell } from "@/features/resident/components/resident-screen-shell";
 import { useResidentActivityFeed } from "@/features/resident/hooks/use-resident-activity-feed";
 import { useResidentDashboard } from "@/features/resident/hooks/use-resident-dashboard";
 import { useResidentFeedback } from "@/features/resident/hooks/use-resident-feedback";
-import { notificationsRoute } from "@/features/notifications/notification-routing";
 import { useResident } from "@/features/resident/resident-context";
 import {
   residentEntriesRoute,
   residentInvitesRoute,
-  residentAnnouncementsRoute,
   residentMaintenanceRoute,
   residentMembersRoute,
-  residentProfileRoute,
   residentVisitorInviteRoute,
   residentVisitorsRoute,
 } from "@/features/resident/resident-routes";
+import { VisitorDetailSheet } from "@/features/visitors/components/visitor-detail-sheet";
 import type { ModelsVisitorEntry } from "@/lib/api/generated-api";
+import {
+  findHubChannel,
+  useHubChannelsQuery,
+  useHubPostsQuery,
+} from "@/lib/api/hub-api";
 import { useGetV1MeNotificationsUnreadCountQuery } from "@/lib/api/notification-api-extensions";
+import { useMaintenanceOutstandingQuery } from "@/lib/api/maintenance-api";
 import { colors } from "@/theme/colors";
 import { layout } from "@/theme/layout";
 import { spacing } from "@/theme/spacing";
 
 export function ResidentCommandCenter() {
   const router = useRouter();
-  const { user } = useResident();
-  const avatarUrl = useProfilePhoto(user?.avatar_url);
+  const { societyId, flatId, user } = useResident();
   const feedback = useResidentFeedback();
   const activityFeed = useResidentActivityFeed();
   const dashboard = useResidentDashboard();
+  const attentionItems = useResidentAttentionItems();
   const unreadNotificationsQuery = useGetV1MeNotificationsUnreadCountQuery();
+  const maintenanceQuery = useMaintenanceOutstandingQuery(
+    { societyId: societyId ?? 0, flatId: flatId ?? 0 },
+    { skip: !societyId || !flatId, refetchOnMountOrArgChange: true },
+  );
+  const channelsQuery = useHubChannelsQuery(societyId ?? 0, {
+    skip: !societyId,
+    refetchOnMountOrArgChange: true,
+  });
+  const announcementChannel = findHubChannel(channelsQuery.data, "announcement");
+  const announcementPostsQuery = useHubPostsQuery(
+    {
+      societyId: societyId ?? 0,
+      channelId: announcementChannel?.id ?? 0,
+    },
+    { skip: !societyId || !announcementChannel?.id, refetchOnMountOrArgChange: true },
+  );
+
   const { refetchAll } = dashboard;
   const unreadNotifications =
     unreadNotificationsQuery.data?.data?.unread_count ?? 0;
@@ -59,17 +83,9 @@ export function ResidentCommandCenter() {
   );
   const [detailVisible, setDetailVisible] = useState(false);
 
-  const goApprovals = useCallback(
-    () => router.push(residentVisitorsRoute()),
-    [router],
-  );
   const goEntries = useCallback(
     (preset?: "expected" | "inside" | "all") =>
       router.push(residentEntriesRoute(preset ?? "expected")),
-    [router],
-  );
-  const goProfile = useCallback(
-    () => router.push(residentProfileRoute()),
     [router],
   );
   const goNotifications = useCallback(
@@ -80,7 +96,16 @@ export function ResidentCommandCenter() {
   const handleRefresh = useCallback(() => {
     refetchAll();
     void activityFeed.refresh();
-  }, [activityFeed, refetchAll]);
+    void maintenanceQuery.refetch();
+    void channelsQuery.refetch();
+    void announcementPostsQuery.refetch();
+  }, [
+    activityFeed,
+    announcementPostsQuery,
+    channelsQuery,
+    maintenanceQuery,
+    refetchAll,
+  ]);
 
   const openEntryDetail = useCallback((entry: ModelsVisitorEntry) => {
     setDetailEntry(entry);
@@ -120,6 +145,21 @@ export function ResidentCommandCenter() {
     [router],
   );
 
+  const announcementPreview = useMemo(() => {
+    const page = announcementPostsQuery.data;
+    if (!page) {
+      return [];
+    }
+    return Array.from(
+      new Map(
+        [...(page.pinned ?? []), ...(page.items ?? [])].map((post) => [
+          post.post_id ?? post.id,
+          post,
+        ]),
+      ).values(),
+    );
+  }, [announcementPostsQuery.data]);
+
   const actions = useMemo(() => {
     const tiles: DashboardActionTileConfig[] = [
       {
@@ -135,14 +175,6 @@ export function ResidentCommandCenter() {
         onPress: () => router.push(residentInvitesRoute()),
       },
       {
-        id: "announcements",
-        title: "Announcements",
-        subtitle: "Society news and notices",
-        tone: "purple",
-        icon: { ios: "megaphone", android: "campaign", web: "campaign" },
-        onPress: () => router.navigate(residentAnnouncementsRoute()),
-      },
-      {
         id: "maintenance",
         title: "Maintenance",
         subtitle: "Bills and payments",
@@ -151,8 +183,16 @@ export function ResidentCommandCenter() {
         onPress: () => router.navigate(residentMaintenanceRoute()),
       },
       {
+        id: "hub",
+        title: "Society Hub",
+        subtitle: "News and community",
+        tone: "purple",
+        icon: { ios: "circle.grid.2x2", android: "hub", web: "hub" },
+        onPress: () => router.navigate(residentHubRoute()),
+      },
+      {
         id: "entries",
-        title: "Visit History",
+        title: "History",
         subtitle: "Recent visitor activity",
         tone: "neutral",
         icon: { ios: "clock", android: "history", web: "history" },
@@ -214,16 +254,32 @@ export function ResidentCommandCenter() {
     ],
   );
 
+  const openAnnouncementPost = useCallback(
+    (postId: number) => {
+      if (!societyId) {
+        return;
+      }
+      router.push(
+        residentHubPostRoute(societyId, postId, announcementChannel?.id, "home"),
+      );
+    },
+    [announcementChannel?.id, router, societyId],
+  );
+
   return (
     <View style={styles.screen}>
       <ResidentScreenShell
         backgroundColor={colors.guard.screenBg}
         contentPaddingBottom={layout.tabBarHeight + spacing.lg}
         onRefresh={handleRefresh}
-        refreshing={dashboard.isRefreshing || activityFeed.isRefreshing}
+        refreshing={
+          dashboard.isRefreshing ||
+          activityFeed.isRefreshing ||
+          maintenanceQuery.isFetching
+        }
       >
         {dashboard.isInitialLoading ? (
-          <DashboardSkeleton />
+          <DashboardSkeleton sections={["header", "hero", "actions", "stats", "attention"]} />
         ) : (
           <Stack gap="2xl">
             <Stack gap="lg">
@@ -247,12 +303,7 @@ export function ResidentCommandCenter() {
                 greeting={getTimeGreeting(
                   user?.full_name ?? dashboard.displayName,
                 )}
-                profileAvatar={{
-                  imageUrl: avatarUrl,
-                  name: user?.full_name ?? dashboard.displayName,
-                  onPress: goProfile,
-                  showOnlineDot: true,
-                }}
+                showBrand
                 statusItems={[
                   {
                     label: dashboard.isSubscriptionBlocked ? "Limited" : "Live",
@@ -276,16 +327,10 @@ export function ResidentCommandCenter() {
               />
             ) : null}
 
-            {dashboard.pendingCount > 0 && !dashboard.isSubscriptionBlocked ? (
-              <DashboardAlertBar
-                count={dashboard.pendingCount}
-                message={`${dashboard.pendingCount} visitor${dashboard.pendingCount === 1 ? "" : "s"} awaiting approval`}
-                onPress={goApprovals}
-              />
-            ) : null}
-
             {!dashboard.isSubscriptionBlocked ? (
               <>
+                <NeedsAttentionSection items={attentionItems} />
+
                 <Stack gap="md">
                   <DashboardHeroCard
                     icon={{
@@ -300,11 +345,20 @@ export function ResidentCommandCenter() {
                   <DashboardActionRow actions={actions} columns={2} />
                 </Stack>
 
-                <DashboardSection
-                  actionLabel="View details >"
-                  title="Overview"
-                  onAction={() => goEntries()}
-                >
+                <ResidentMaintenanceDashboardCard
+                  bill={maintenanceQuery.data?.current_bill}
+                  loading={maintenanceQuery.isLoading && !maintenanceQuery.data}
+                />
+
+                <ResidentAnnouncementsSnapshot
+                  items={announcementPreview}
+                  loading={
+                    announcementPostsQuery.isLoading && !announcementPostsQuery.data
+                  }
+                  onItemPress={openAnnouncementPost}
+                />
+
+                <DashboardSection title="Overview">
                   <DashboardOverviewGrid
                     stats={overviewStats}
                     onStatPress={handleStatPress}

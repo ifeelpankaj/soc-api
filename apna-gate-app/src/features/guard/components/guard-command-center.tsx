@@ -7,7 +7,7 @@ import { Stack } from "@/components/layout";
 import {
   DashboardActionRow,
   DashboardActivityFeed,
-  DashboardAlertBar,
+  NeedsAttentionSection,
   DashboardBannerCarousel,
   DashboardErrorBanner,
   DashboardHeader,
@@ -23,7 +23,7 @@ import {
 import { GuardScreenShell } from "@/features/guard/components/guard-screen-shell";
 import { useGuardSociety } from "@/features/guard/guard-context";
 import { useGuardCheckInReadiness } from "@/features/guard/check-in-readiness-provider";
-import { readyToCheckInMessage } from "@/features/guard/check-in-readiness";
+import { mapGuardAttentionItems } from "@/features/dashboard/map-guard-attention-items";
 import { useGuardActivityFeed } from "@/features/guard/hooks/use-guard-activity-feed";
 import { useGuardDashboard } from "@/features/guard/hooks/use-guard-dashboard";
 import { notificationsRoute } from "@/features/notifications/notification-routing";
@@ -85,6 +85,17 @@ export function GuardCommandCenter() {
     refetchAll();
     void activityFeed.refresh();
   }, [activityFeed, refetchAll]);
+
+  const guardAttentionItems = useMemo(
+    () =>
+      mapGuardAttentionItems({
+        pendingCount,
+        readyCount,
+        onReviewPending: goPending,
+        onCheckIn: () => router.push(guardWaitingAtGateRoute()),
+      }),
+    [goPending, pendingCount, readyCount, router],
+  );
 
   const handleStatPress = useCallback(
     (id: string) => {
@@ -254,17 +265,8 @@ export function GuardCommandCenter() {
               />
             ) : null}
 
-            {pendingCount > 0 && !isSubscriptionBlocked ? (
-              <DashboardAlertBar count={pendingCount} onPress={goPending} />
-            ) : null}
-
-            {readyCount > 0 && !isSubscriptionBlocked ? (
-              <DashboardAlertBar
-                actionLabel="Check In"
-                message={readyToCheckInMessage(readyCount)}
-                icon={{ ios: "door.left.hand.open", android: "meeting_room", web: "meeting_room" }}
-                onPress={() => router.push(guardWaitingAtGateRoute())}
-              />
+            {!isSubscriptionBlocked ? (
+              <NeedsAttentionSection items={guardAttentionItems} />
             ) : null}
 
             {!isSubscriptionBlocked ? (

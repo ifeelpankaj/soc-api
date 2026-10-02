@@ -5,6 +5,7 @@ import {
   guardEntriesRoute,
   guardEntryDetailRoute,
 } from "@/features/guard/guard-routes";
+import { residentHubPostRoute } from "@/features/hub/hub-routes";
 import {
   residentEntryDetailRoute,
   residentEntriesRoute,
@@ -333,12 +334,23 @@ export function notificationRoute(
     case "maintenance_bill_generated":
     case "maintenance_bill_reminder":
     case "maintenance_payment_verified":
+      return notificationsRoute();
     case "hub.announcement":
     case "hub.reply":
     case "hub.reaction":
-    case "hub.removed":
-      // Dedicated content screens are not present in this app yet.
+    case "hub.removed": {
+      const postId = Number(stringValue(data.post_id));
+      const societyId = Number(stringValue(data.society_id));
+      if (
+        Number.isFinite(postId) &&
+        postId > 0 &&
+        Number.isFinite(societyId) &&
+        societyId > 0
+      ) {
+        return residentHubPostRoute(societyId, postId, undefined, "home");
+      }
       return notificationsRoute();
+    }
     default:
       return notificationsRoute();
   }

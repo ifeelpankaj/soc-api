@@ -27,9 +27,21 @@ function notification(
   };
 }
 
-test("future payloads and Hub or Maintenance events fall back to the inbox", () => {
+test("future payloads and Maintenance events fall back to the inbox", () => {
   assert.equal(notificationRoute(notification("visitor.checkin", {entry_id:"42",schema_version:2})), "/notifications");
-  assert.equal(notificationRoute(notification("hub.announcement", {post_id:"9",schema_version:1})), "/notifications");
+  assert.deepEqual(
+    notificationRoute(
+      notification("hub.announcement", {
+        post_id: "9",
+        society_id: "3",
+        schema_version: 1,
+      }),
+    ),
+    {
+      pathname: "/resident/hub/posts/[postId]",
+      params: { postId: "9", societyId: "3", channelId: undefined, returnTo: "home" },
+    },
+  );
   assert.equal(notificationRoute(notification("maintenance_bill_generated", {bill_id:"7",schema_version:1})), "/notifications");
 });
 

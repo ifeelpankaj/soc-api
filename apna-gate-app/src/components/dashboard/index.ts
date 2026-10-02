@@ -8,6 +8,13 @@ export type {
 } from "./dashboard-header";
 export { DashboardHeroCard } from "./dashboard-hero-card";
 export { DashboardAlertBar } from "./dashboard-alert-bar";
+export { NeedsAttentionSection } from "./needs-attention/needs-attention-section";
+export type { AttentionItem } from "./needs-attention/types";
+export {
+  formatAttentionCount,
+  hiddenAttentionCount,
+  visibleAttentionItems,
+} from "./needs-attention/needs-attention-logic";
 export { DashboardSection } from "./dashboard-section";
 export { DashboardActionTile } from "./dashboard-action-tile";
 export type { DashboardActionTileConfig, DashboardActionTone } from "./dashboard-action-tile";

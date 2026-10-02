@@ -6,7 +6,13 @@ import { layout } from "@/theme/layout";
 import { radius } from "@/theme/radius";
 import { spacing } from "@/theme/spacing";
 
-type DashboardSkeletonSection = "header" | "hero" | "actions" | "stats" | "activity";
+type DashboardSkeletonSection =
+  | "header"
+  | "hero"
+  | "actions"
+  | "attention"
+  | "stats"
+  | "activity";
 
 type DashboardSkeletonProps = {
   sections?: DashboardSkeletonSection[];
@@ -34,6 +40,10 @@ export function DashboardSkeleton({
           <Skeleton style={styles.skeletonLocation} />
           <Skeleton style={styles.skeletonAnnouncement} />
         </Stack>
+      ) : null}
+
+      {sections.includes("attention") ? (
+        <Skeleton style={styles.skeletonAttention} />
       ) : null}
 
       {sections.includes("hero") || sections.includes("actions") ? (
@@ -85,6 +95,11 @@ const styles = StyleSheet.create({
   skeleton: {
     backgroundColor: "rgba(226, 232, 240, 0.7)",
     borderRadius: radius.sm,
+  },
+  skeletonAttention: {
+    borderRadius: radius.lg,
+    height: 120,
+    width: "100%",
   },
   skeletonActionTile: {
     borderRadius: radius.xl,

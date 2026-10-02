@@ -4,11 +4,11 @@ import { SymbolView } from "expo-symbols";
 import { NotchedTabBar } from "@/components/layout/notched-tab-bar";
 import { useAppFeedback } from "@/features/shared/use-app-feedback";
 import { useResident } from "@/features/resident/resident-context";
+import { residentHubRoute } from "@/features/hub/hub-routes";
 import {
   residentDashboardRoute,
   residentProfileRoute,
   residentMaintenanceRoute,
-  residentAnnouncementsRoute,
   residentVisitorInviteRoute,
 } from "@/features/resident/resident-routes";
 import { colors } from "@/theme/colors";
@@ -113,14 +113,18 @@ export function ResidentTabBar({ state }: { state: TabBarState }) {
       }}
       additionalRightTabs={[
         {
-          label: "Announcements",
-          active: state.routes[state.index]?.name === "announcements",
-          onPress: () => router.navigate(residentAnnouncementsRoute()),
+          label: "Hub",
+          active: state.routes[state.index]?.name === "hub",
+          onPress: () => router.navigate(residentHubRoute()),
           icon: (
             <SymbolView
-              name={{ ios: "megaphone", android: "campaign", web: "campaign" }}
+              name={{ ios: "circle.grid.2x2", android: "hub", web: "hub" }}
               size={22}
-              tintColor={state.routes[state.index]?.name === "announcements" ? colors.brand.orange : colors.text.placeholder}
+              tintColor={
+                state.routes[state.index]?.name === "hub"
+                  ? colors.brand.orange
+                  : colors.text.placeholder
+              }
             />
           ),
         },

@@ -10,8 +10,12 @@ export default function ResidentTabsLayout() {
     >
       <Tabs.Screen name="dashboard" options={{ title: "Home" }} />
       <Tabs.Screen name="maintenance" options={{ title: "Maintenance" }} />
-      <Tabs.Screen name="announcements" options={{ title: "Announcements" }} />
+      <Tabs.Screen name="hub" options={{ title: "Hub" }} />
       <Tabs.Screen name="profile" options={{ title: "Profile" }} />
+      <Tabs.Screen
+        name="announcements"
+        options={{ title: "Announcements", href: null }}
+      />
     </Tabs>
   );
 }
