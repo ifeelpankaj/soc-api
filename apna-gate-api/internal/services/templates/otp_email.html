@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <meta name="supported-color-schemes" content="light" />
+    <title>Verify your Apna Gate account</title>
+    <style>
+      @media only screen and (max-width: 620px) {
+        .email-shell { width: 100% !important; }
+        .content { padding: 32px 24px !important; }
+        .header { padding: 24px !important; }
+        .otp { font-size: 30px !important; letter-spacing: 8px !important; padding: 16px 20px !important; }
+      }
+    </style>
+  </head>
+  <body style="margin:0;padding:0;background:#f8fafc;color:#0f172a;font-family:Arial,'Helvetica Neue',sans-serif;-webkit-text-size-adjust:100%;">
+    <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">Use this code to finish setting up your Apna Gate account. It expires in 5 minutes.</div>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;border-collapse:collapse;background:#f8fafc;">
+      <tr>
+        <td align="center" style="padding:32px 16px;">
+          <table class="email-shell" role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="width:600px;max-width:600px;border-collapse:separate;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;overflow:hidden;">
+            <tr>
+              <td class="header" style="padding:24px 40px;background:#101d36;border-bottom:4px solid #ff6a1a;">
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                  <tr>
+                    <td aria-hidden="true" style="width:38px;height:38px;border-radius:10px;background:#ff6a1a;color:#ffffff;font-size:14px;font-weight:700;text-align:center;vertical-align:middle;">AG</td>
+                    <td style="padding-left:12px;color:#ffffff;font-size:20px;font-weight:700;letter-spacing:-0.3px;">Apna Gate</td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td class="content" style="padding:40px;">
+                <p style="margin:0 0 12px;color:#ff6a1a;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">Email verification</p>
+                <h1 style="margin:0 0 20px;color:#101d36;font-size:28px;line-height:1.25;letter-spacing:-0.5px;">Confirm it is really you</h1>
+                <p style="margin:0 0 16px;color:#334155;font-size:16px;line-height:1.65;">{{if .Name}}Hi {{.Name}},{{else}}Hello,{{end}}</p>
+                <p style="margin:0 0 28px;color:#475569;font-size:16px;line-height:1.65;">Enter the verification code below in Apna Gate to finish creating your account.</p>
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;border-collapse:separate;background:#fff7f1;border:1px solid #fed7bf;border-radius:12px;">
+                  <tr>
+                    <td align="center" style="padding:24px 16px;">
+                      <p style="margin:0 0 10px;color:#7c2d12;font-size:12px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;">Your verification code</p>
+                      <div class="otp" style="display:inline-block;padding:16px 24px;color:#101d36;font-family:'Courier New',monospace;font-size:36px;font-weight:700;letter-spacing:10px;line-height:1;white-space:nowrap;">{{.OTP}}</div>
+                      <p style="margin:10px 0 0;color:#9a3412;font-size:13px;line-height:1.5;">Expires in 5 minutes</p>
+                    </td>
+                  </tr>
+                </table>
+                <p style="margin:28px 0 0;padding:16px 18px;background:#f8fafc;border-left:4px solid #64748b;border-radius:6px;color:#475569;font-size:14px;line-height:1.6;"><strong style="color:#334155;">Keep this code private.</strong> Apna Gate support will never ask you for a verification code. If you did not create an account, you can safely ignore this email.</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:24px 40px;background:#f8fafc;border-top:1px solid #e2e8f0;text-align:center;">
+                <p style="margin:0 0 6px;color:#64748b;font-size:12px;line-height:1.6;">This is an automated security email from Apna Gate.</p>
+                <p style="margin:0;color:#94a3b8;font-size:12px;line-height:1.6;">&copy; {{.Year}} Apna Gate. All rights reserved.{{if .AppURL}} &nbsp;&middot;&nbsp; <a href="{{.AppURL}}" style="color:#c2410c;text-decoration:underline;">Open Apna Gate</a>{{end}}</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

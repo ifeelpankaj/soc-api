@@ -1,0 +1,12 @@
+pre-commit:
+  parallel: false
+  commands:
+    gofmt:
+      run: make fmt
+    golangci-lint:
+      run: make lint
+
+commit-msg:
+  commands:
+    conventional-api-message:
+      run: make commit-msg-check MSG_FILE={1}

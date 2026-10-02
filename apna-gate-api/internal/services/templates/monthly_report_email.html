@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <meta name="supported-color-schemes" content="light" />
+    <title>{{.Period}} visitor report for {{.SocietyName}}</title>
+    <style>
+      @media only screen and (max-width: 620px) {
+        .email-shell { width: 100% !important; }
+        .content { padding: 32px 24px !important; }
+        .header, .footer { padding-left: 24px !important; padding-right: 24px !important; }
+        .button { display: block !important; }
+      }
+    </style>
+  </head>
+  <body style="margin:0;padding:0;background:#f8fafc;color:#0f172a;font-family:Arial,'Helvetica Neue',sans-serif;-webkit-text-size-adjust:100%;">
+    <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">The {{.Period}} visitor report for {{.SocietyName}} is attached as a CSV file.</div>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;border-collapse:collapse;background:#f8fafc;">
+      <tr>
+        <td align="center" style="padding:32px 16px;">
+          <table class="email-shell" role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="width:600px;max-width:600px;border-collapse:separate;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;overflow:hidden;">
+            <tr>
+              <td class="header" style="padding:24px 40px;background:#101d36;border-bottom:4px solid #ff6a1a;">
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0"><tr><td aria-hidden="true" style="width:38px;height:38px;border-radius:10px;background:#ff6a1a;color:#ffffff;font-size:14px;font-weight:700;text-align:center;vertical-align:middle;">AG</td><td style="padding-left:12px;color:#ffffff;font-size:20px;font-weight:700;letter-spacing:-0.3px;">Apna Gate</td></tr></table>
+              </td>
+            </tr>
+            <tr>
+              <td class="content" style="padding:40px;">
+                <p style="margin:0 0 12px;color:#0d9488;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">Monthly visitor report</p>
+                <h1 style="margin:0 0 20px;color:#101d36;font-size:28px;line-height:1.25;letter-spacing:-0.5px;">Your {{.Period}} report is ready</h1>
+                <p style="margin:0 0 24px;color:#475569;font-size:16px;line-height:1.65;">Hello,</p>
+                <p style="margin:0 0 24px;color:#475569;font-size:16px;line-height:1.65;">Attached is the monthly visitor entry report for <strong style="color:#101d36;">{{.SocietyName}}</strong>. It contains the visitor activity recorded during {{.Period}}.</p>
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;border-collapse:separate;background:#f0fdfa;border:1px solid #99f6e4;border-radius:10px;">
+                  <tr>
+                    <td aria-hidden="true" style="width:52px;padding:18px 0 18px 20px;color:#0f766e;font-size:28px;vertical-align:top;">&#8681;</td>
+                    <td style="padding:18px 20px 18px 10px;vertical-align:top;"><p style="margin:0 0 4px;color:#115e59;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;">CSV attachment</p><p style="margin:0;color:#134e4a;font-family:'Courier New',monospace;font-size:13px;line-height:1.5;overflow-wrap:anywhere;word-break:break-all;">{{.Filename}}</p></td>
+                  </tr>
+                </table>
+                <p style="margin:24px 0 0;padding:16px 18px;background:#fffaf6;border-left:4px solid #ff6a1a;border-radius:6px;color:#625852;font-size:14px;line-height:1.6;"><strong style="color:#211714;">Handle resident data carefully.</strong> The attachment may contain personal visitor information. Share it only with authorized society staff and store it securely.</p>
+                {{if .AppURL}}<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"><tr><td align="center" style="padding:28px 0 0;"><a class="button" href="{{.AppURL}}" style="display:inline-block;padding:15px 28px;background:#ff6a1a;border:1px solid #ff6a1a;border-radius:9px;color:#ffffff;font-size:16px;font-weight:700;line-height:1;text-align:center;text-decoration:none;">Open Apna Gate</a></td></tr></table>{{end}}
+              </td>
+            </tr>
+            <tr>
+              <td class="footer" style="padding:24px 40px;background:#f8fafc;border-top:1px solid #e2e8f0;text-align:center;">
+                <p style="margin:0 0 6px;color:#64748b;font-size:12px;line-height:1.6;">This scheduled report was generated automatically for {{.SocietyName}}.</p>
+                <p style="margin:0;color:#94a3b8;font-size:12px;line-height:1.6;">&copy; {{.Year}} Apna Gate. All rights reserved.</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

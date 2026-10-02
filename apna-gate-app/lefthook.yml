@@ -1,0 +1,12 @@
+pre-commit:
+  parallel: false
+  commands:
+    lint:
+      run: npm run lint
+    prebuild:
+      run: npm run prebuild
+
+commit-msg:
+  commands:
+    conventional-app-message:
+      run: node scripts/check-commit-msg.js {1}

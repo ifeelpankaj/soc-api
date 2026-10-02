@@ -1,0 +1,15 @@
+export const layout = {
+  inputHeight: 56,
+  buttonHeight: 56,
+  buttonHeightCompact: 44,
+  screenPaddingHorizontal: 20,
+  screenPaddingTop: 12,
+  screenPaddingBottom: 32,
+  footerPaddingHorizontal: 24,
+  purposeCardWidth: 67,
+  purposeCardHeight: 61,
+  actionTileMinHeight: 96,
+  overviewStatMinHeight: 88,
+  tabBarHeight: 88,
+  fabSize: 56,
+} as const;

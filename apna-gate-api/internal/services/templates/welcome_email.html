@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <meta name="supported-color-schemes" content="light" />
+    <title>Welcome to Apna Gate</title>
+    <style>
+      @media only screen and (max-width: 620px) {
+        .email-shell { width: 100% !important; }
+        .content { padding: 32px 24px !important; }
+        .header, .footer { padding-left: 24px !important; padding-right: 24px !important; }
+        .button { display: block !important; }
+      }
+    </style>
+  </head>
+  <body style="margin:0;padding:0;background:#f8fafc;color:#0f172a;font-family:Arial,'Helvetica Neue',sans-serif;-webkit-text-size-adjust:100%;">
+    <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">Your Apna Gate account is verified and ready to use.</div>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;border-collapse:collapse;background:#f8fafc;">
+      <tr>
+        <td align="center" style="padding:32px 16px;">
+          <table class="email-shell" role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="width:600px;max-width:600px;border-collapse:separate;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;overflow:hidden;">
+            <tr>
+              <td class="header" style="padding:24px 40px;background:#101d36;border-bottom:4px solid #ff6a1a;">
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0"><tr><td aria-hidden="true" style="width:38px;height:38px;border-radius:10px;background:#ff6a1a;color:#ffffff;font-size:14px;font-weight:700;text-align:center;vertical-align:middle;">AG</td><td style="padding-left:12px;color:#ffffff;font-size:20px;font-weight:700;letter-spacing:-0.3px;">Apna Gate</td></tr></table>
+              </td>
+            </tr>
+            <tr>
+              <td class="content" style="padding:40px;">
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 20px;"><tr><td aria-hidden="true" style="width:48px;height:48px;border-radius:24px;background:#ecfdf3;color:#15803d;font-size:24px;font-weight:700;text-align:center;vertical-align:middle;">&#10003;</td></tr></table>
+                <p style="margin:0 0 12px;color:#ff6a1a;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">Account verified</p>
+                <h1 style="margin:0 0 20px;color:#101d36;font-size:28px;line-height:1.25;letter-spacing:-0.5px;">Welcome to Apna Gate</h1>
+                <p style="margin:0 0 16px;color:#334155;font-size:16px;line-height:1.65;">{{if .Name}}Hi {{.Name}},{{else}}Hello,{{end}}</p>
+                <p style="margin:0 0 24px;color:#475569;font-size:16px;line-height:1.65;">Your account is verified and ready. Apna Gate helps your community manage everyday access and society activity in one secure place.</p>
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;border-collapse:separate;background:#fffaf6;border:1px solid #f1e4da;border-radius:10px;">
+                  <tr><td style="padding:20px 22px;color:#334155;font-size:14px;line-height:1.7;"><strong style="color:#101d36;">You are all set to:</strong><br />&#8226;&nbsp; Manage visitor access and invitations<br />&#8226;&nbsp; Stay informed about society activity<br />&#8226;&nbsp; Keep your community access organized</td></tr>
+                </table>
+                {{if .AppURL}}<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"><tr><td align="center" style="padding:28px 0 0;"><a class="button" href="{{.AppURL}}" style="display:inline-block;padding:15px 28px;background:#ff6a1a;border:1px solid #ff6a1a;border-radius:9px;color:#ffffff;font-size:16px;font-weight:700;line-height:1;text-align:center;text-decoration:none;">Get started</a></td></tr></table>{{end}}
+                <p style="margin:28px 0 0;color:#64748b;font-size:14px;line-height:1.6;">We are glad to have you with us.<br /><strong style="color:#334155;">The Apna Gate team</strong></p>
+              </td>
+            </tr>
+            <tr>
+              <td class="footer" style="padding:24px 40px;background:#f8fafc;border-top:1px solid #e2e8f0;text-align:center;">
+                <p style="margin:0;color:#94a3b8;font-size:12px;line-height:1.6;">&copy; {{.Year}} Apna Gate. All rights reserved.{{if .AppURL}} &nbsp;&middot;&nbsp; <a href="{{.AppURL}}" style="color:#c2410c;text-decoration:underline;">Open Apna Gate</a>{{end}}</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
